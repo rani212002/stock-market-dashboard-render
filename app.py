@@ -35,11 +35,15 @@ import config
 # Load data
 try:
     import pandas as pd
-    combined_data = pd.read_csv(config.COMBINED_DATA_PATH)
-    if 'Year' not in combined_data.columns:
-        combined_data['Year'] = pd.to_datetime(combined_data.index).year
-    if 'Quarter' not in combined_data.columns:
-        combined_data['Quarter'] = pd.to_datetime(combined_data.index).quarter.map({1:'Q1', 2:'Q2', 3:'Q3', 4:'Q4'})
+    if config.COMBINED_DATA_PATH.exists():
+        combined_data = pd.read_csv(config.COMBINED_DATA_PATH)
+        if 'Year' not in combined_data.columns:
+            combined_data['Year'] = pd.to_datetime(combined_data.index).year
+        if 'Quarter' not in combined_data.columns:
+            combined_data['Quarter'] = pd.to_datetime(combined_data.index).quarter.map({1:'Q1', 2:'Q2', 3:'Q3', 4:'Q4'})
+    else:
+        print(f"⚠️ Data file not found at {config.COMBINED_DATA_PATH}")
+        combined_data = pd.DataFrame()
 except Exception as e:
     print(f"⚠️ Warning loading combined_data: {e}")
     combined_data = pd.DataFrame()
