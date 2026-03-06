@@ -32,9 +32,8 @@ wheels/
 .DS_Store
 
 # Data and Models
-data/*.csv
-models/*.pkl
-models/*.h5
+# Keep these folders deployable on Render by tracking required assets.
+*.h5
 
 # Jupyter
 .ipynb_checkpoints/
