@@ -21,6 +21,11 @@ app = dash.Dash(__name__)
 app.title = "📈 Stock Market Analytics Dashboard"
 server = app.server  # For Gunicorn
 
+
+def wsgi_app(environ, start_response):
+    """Explicit WSGI callable for Gunicorn on Render."""
+    return server(environ, start_response)
+
 # Import layouts after app is created
 # NOTE: Full layouts are extracted from notebook cells
 # The following imports assume modularized layout files
