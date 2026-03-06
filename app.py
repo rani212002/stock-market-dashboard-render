@@ -15,11 +15,11 @@ from dash import dcc, html
 import plotly.graph_objects as go
 
 # Create Dash app
-app = dash.Dash(__name__)
+dash_app = dash.Dash(__name__)
 
 # Configure app properties
-app.title = "📈 Stock Market Analytics Dashboard"
-server = app.server  # For Gunicorn
+dash_app.title = "📈 Stock Market Analytics Dashboard"
+server = dash_app.server  # Flask WSGI app for Gunicorn
 
 
 def wsgi_app(environ, start_response):
@@ -56,7 +56,7 @@ except Exception as e:
 # ============================================================================
 # APP LAYOUT - Basic Structure
 # ============================================================================
-app.layout = html.Div([
+dash_app.layout = html.Div([
     html.Div([
         html.H1("📈 Stock Market Analytics Dashboard", style={
             'textAlign': 'center', 
@@ -110,7 +110,7 @@ app.layout = html.Div([
 # ============================================================================
 # SIMPLE CALLBACK FOR INITIAL TESTING
 # ============================================================================
-@app.callback(
+@dash_app.callback(
     dash.dependencies.Output('eda-content', 'children'),
     dash.dependencies.Input('tabs', 'value')
 )
@@ -123,7 +123,7 @@ def display_eda(tab):
         ], style={'padding': '20px'})
     return html.P("Select EDA Charts tab", style={'textAlign': 'center', 'padding': '20px'})
 
-@app.callback(
+@dash_app.callback(
     dash.dependencies.Output('model-content', 'children'),
     dash.dependencies.Input('tabs', 'value')
 )
@@ -141,7 +141,7 @@ def display_models(tab):
         ], style={'padding': '20px'})
     return html.P("Select Model Performance tab", style={'textAlign': 'center', 'padding': '20px'})
 
-@app.callback(
+@dash_app.callback(
     dash.dependencies.Output('sentiment-content', 'children'),
     dash.dependencies.Input('tabs', 'value')
 )
@@ -162,6 +162,12 @@ def display_sentiment(tab):
 # ============================================================================
 # RUN APPLICATION
 # ============================================================================
+# Expose conventional WSGI names so both `gunicorn app:app` and
+# `gunicorn wsgi:application` work on hosting platforms.
+application = server
+app = application
+
+
 if __name__ == '__main__':
     print("\n" + "="*70)
     print("🚀 Stock Market Analytics Dashboard Starting...")
@@ -172,7 +178,7 @@ if __name__ == '__main__':
     print(f"🌐 Access at: http://{config.DASH_HOST}:{config.DASH_PORT}")
     print("="*70 + "\n")
     
-    app.run_server(
+    dash_app.run_server(
         debug=config.DEBUG_MODE,
         host=config.DASH_HOST,
         port=config.DASH_PORT
