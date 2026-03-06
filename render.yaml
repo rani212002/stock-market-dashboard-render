@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: stock-market-dashboard
+    env: python
+    plan: free
+    pythonVersion: 3.11
+    startCommand: "gunicorn app:server"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
